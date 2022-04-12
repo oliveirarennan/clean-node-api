@@ -1,4 +1,5 @@
 import { AuthenticationModel } from '../../../domain/usecases/Authentication'
+import { HashComparer } from '../../interfaces/criptography/HashComparer'
 import { LoadAccountByEmailRepository } from '../../interfaces/db/LoadAccountByEmailRepository'
 import { AccountModel } from '../AddAccount/DbAddAccountInterfaces'
 import { DbAuthentication } from './DbAuthentication'
@@ -7,7 +8,7 @@ const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
   name: 'any_name',
   email: 'any_email@mail.com',
-  password: 'any_password'
+  password: 'hashed_password'
 })
 
 const makeFakeAuthentication = (): AuthenticationModel => ({
@@ -25,18 +26,31 @@ const makeLoadAccountByEmailRepositoryStub = (): LoadAccountByEmailRepository =>
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHashComparer = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async comparer (value: string, hash: string): Promise<boolean> {
+      return await new Promise(resolve => resolve(true))
+    }
+  }
+
+  return new HashComparerStub()
+}
+
 interface SutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
+  hashCompareStub: HashComparer
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepositoryStub()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub)
+  const hashCompareStub = makeHashComparer()
+  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashCompareStub)
 
   return {
     sut,
-    loadAccountByEmailRepositoryStub
+    loadAccountByEmailRepositoryStub,
+    hashCompareStub
   }
 }
 
@@ -69,5 +83,15 @@ describe('DbAuthentication UseCase', () => {
     const accessToken = await sut.auth(makeFakeAuthentication())
 
     expect(accessToken).toBeNull()
+  })
+
+  it(' should call HashCompare with correct values', async () => {
+    const { sut, hashCompareStub } = makeSut()
+
+    const compareSpy = jest.spyOn(hashCompareStub, 'comparer')
+
+    await sut.auth(makeFakeAuthentication())
+
+    await expect(compareSpy).toBeCalledWith('any_password', 'hashed_password')
   })
 })
