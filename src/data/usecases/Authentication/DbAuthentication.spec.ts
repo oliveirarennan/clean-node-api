@@ -138,6 +138,7 @@ describe('DbAuthentication UseCase', () => {
 
     await expect(generateSpy).toBeCalledWith('any_id')
   })
+
   it('should throw if TokenGenerator throws', async () => {
     const { sut, tokenGeneratorStub } = makeSut()
 
@@ -146,5 +147,13 @@ describe('DbAuthentication UseCase', () => {
     const promise = sut.auth(makeFakeAuthentication())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  it('should return a access token if TokenGenerator are in success', async () => {
+    const { sut } = makeSut()
+
+    const accessToken = await sut.auth(makeFakeAuthentication())
+
+    expect(accessToken).toBe('any_token')
   })
 })
