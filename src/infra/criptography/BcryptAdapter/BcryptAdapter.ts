@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
-import { HashComparer } from '../../data/interfaces/criptography/HashComparer'
-import { Hasher } from '../../data/interfaces/criptography/Hasher'
+import { HashComparer } from '../../../data/interfaces/criptography/HashComparer'
+import { Hasher } from '../../../data/interfaces/criptography/Hasher'
 
 export class BcryptAdapter implements Hasher, HashComparer {
   constructor (private readonly salt: number) {}
