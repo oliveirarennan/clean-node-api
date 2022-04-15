@@ -4,8 +4,8 @@ import { AccountMongoRepository } from '../../../infra/db/mongodb/AccountReposit
 import { LogMongoRepository } from '../../../infra/db/mongodb/LogRepository/LogRepository'
 import { SignUpController } from '../../../presentation/controllers/SignupController/SignupController'
 import { Controller } from '../../../presentation/interfaces'
-import { LogControllerDecorator } from '../../decorators/Log'
-import { makeSignUpValidation } from './SignupValidation'
+import { LogControllerDecorator } from '../../decorators/LogControllerDecorator'
+import { makeSignUpValidation } from './SignupValidationFactory'
 
 export const makeSignUpController = (): Controller => {
   const salt = 12
