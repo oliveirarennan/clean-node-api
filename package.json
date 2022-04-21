@@ -9,10 +9,10 @@
     "debug": "nodemon -L --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/main/server.js",
     "up": "npm run build && docker-compose up -d",
     "down": "docker-compose down",
-    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test": "jest --no-cache --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit.config.ts",
     "test:integration": "npm test -- --watch -c jest-integration.config.ts",
-    "test:verbose": "jest --passWithNoTests --runInBand",
+    "test:verbose": "jest --no-cache --passWithNoTests --runInBand",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage"
   },
