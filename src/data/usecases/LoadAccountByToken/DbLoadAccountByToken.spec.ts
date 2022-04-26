@@ -1,17 +1,36 @@
 import { Decrypter } from '../../interfaces/criptography/Decrypter'
 import { DbLoadAccountByToken } from './DbLoadAccountByToken'
 
+const makeDecrypter = (): Decrypter => {
+  class DecrypterStub implements Decrypter {
+    async decrypt (value: string): Promise<string> {
+      return await new Promise(resolve => resolve('any_value'))
+    }
+  }
+
+  return new DecrypterStub()
+}
+
+interface SutTypes {
+  sut: DbLoadAccountByToken
+  decrypterStub: Decrypter
+}
+
+const makeSut = (): SutTypes => {
+  const decrypterStub = makeDecrypter()
+  const sut = new DbLoadAccountByToken(decrypterStub)
+
+  return {
+    sut,
+    decrypterStub
+  }
+}
+
 describe('DbLoadAccountByToken UseCase', () => {
   it('Should call Decrypter with correct values', async () => {
-    class DecrypterStub implements Decrypter {
-      async decrypt (value: string): Promise<string> {
-        return await new Promise(resolve => resolve('any_value'))
-      }
-    }
+    const { sut, decrypterStub } = makeSut()
 
-    const decrypterStub = new DecrypterStub()
     const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
-    const sut = new DbLoadAccountByToken(decrypterStub)
     await sut.load('any_token')
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
   })
