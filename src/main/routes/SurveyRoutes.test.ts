@@ -19,7 +19,7 @@ describe('Survey Routes Middleware', () => {
     await surveyCollection.deleteMany({})
   })
   describe('POST /surveys', () => {
-    it('Should return 204 on AddSurvey success', async () => {
+    it('Should return 403 on AddSurvey without accessToken', async () => {
       await request(app)
         .post('/api/surveys')
         .send({
@@ -34,7 +34,7 @@ describe('Survey Routes Middleware', () => {
             }
           ]
         })
-        .expect(204)
+        .expect(403)
     })
   })
 })
